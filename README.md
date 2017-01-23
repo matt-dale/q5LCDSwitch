@@ -1,5 +1,6 @@
 # q5LCDSwitch
-Python library for use with the Q5 switch
+Python library for use with the Q5 switch sold by RJS Electronics.
+http://www.ledswitches.co.uk/lcd-oled-products/lcd-switches.html
 
 It is only tested with the Raspberry Pi 3 with Raspbian Lite OS.  
 
