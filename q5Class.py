@@ -171,7 +171,7 @@ class Q5LCDController(object):
         return
 
 
-    def write_char_to_display(self, char, locationString, inverse=False, raw=False):
+    def write_char_to_display(self, char, locationString, inverse=False, raw=False, font=Q5Font):
         """
         simple copy of the C code, inverse is a boolean flag
         raw takes a raw data list (must be 16 bytes long)
@@ -180,7 +180,7 @@ class Q5LCDController(object):
             data = char
         else:
             try:
-                data = Q5Font[char]
+                data = font[char]
             except:
                 raise ValueError('This character has not been mapped yet: {0}'.format(char))
         spi = self.spi
@@ -296,7 +296,7 @@ class Q5LCDController(object):
         sleep(0.5)
         return
 
-    def writeAString(self, string, inverse=False):
+    def writeAString(self, string, inverse=False, font=Q5Font):
         """
         takes a string and writes it to the screen 
         various niceties include centering the words on the screen 
@@ -320,7 +320,7 @@ class Q5LCDController(object):
                 position = 9
             for char in wordsToWrite[0]:
                 curs = 'Curs'+str(position)
-                self.write_char_to_display('Char_'+char, curs, inverse=inverse)
+                self.write_char_to_display('Char_'+char, curs, inverse=inverse, font=Q5BoldFont)
                 position += 1
         else:
             position = 1
