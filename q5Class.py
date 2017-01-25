@@ -26,6 +26,7 @@ def setupSPI(device,address):
     spi.mode = 2
     spi.cshigh = False
     spi.no_cs = True
+    spi.max_speed_hz = 30500
     return spi
 
 
@@ -39,7 +40,7 @@ class Q5LCDController(object):
         as mode 2, cshigh = False and no_cs = True
         """
         self.spi = spiObj
-
+        self.initiateQ5()
 
         # define row cursor positions for the 0x48 commands
         #describes each row
@@ -136,8 +137,8 @@ class Q5LCDController(object):
         before sending a new command, the Q5 can be initialized by sending it a 0x00 byte, then 
         waiting for 0.02 seconds
         """
-        self.spi.writebytes([0x00])
-        sleep(0.02)
+        self.spi.xfer2([0x00])
+        sleep(0.5)
         return
 
 
@@ -151,7 +152,7 @@ class Q5LCDController(object):
             raise ValueError('{0} does not exist in the accepted colors'.format(color))
         else:
             value = [0x41, color, 0x43]
-            self.spi.writebytes(value)
+            self.spi.xfer2(value)
         return
 
 
@@ -167,7 +168,7 @@ class Q5LCDController(object):
             thingsToWrite.append(i >> 4)
             thingsToWrite.append(i & 0xF)
         thingsToWrite.append(0x43)
-        self.spi.writebytes(thingsToWrite)
+        self.spi.xfer2(thingsToWrite)
         return
 
 
@@ -220,68 +221,68 @@ class Q5LCDController(object):
 
                 """
                 row1 = [0x48, location[0], location[1], location[2], data[0], data[8], 0x43]
-                spi.writebytes(row1)
+                spi.xfer2(row1)
                 sleep(0.001)
                 
                 row2 = [0x48, location[0], location[1], location[2]-8, data[1], data[9], 0x43]
-                spi.writebytes(row2)
+                spi.xfer2(row2)
                 sleep(0.001)
                 
                 row3 = [0x48, location[0], location[1]-1, location[2], data[2], data[10], 0x43]
-                spi.writebytes(row3)
+                spi.xfer2(row3)
                 sleep(0.001)
                 
                 row4 = [0x48, location[0], location[1]-1, location[2]-8, data[3], data[11], 0x43]
-                spi.writebytes(row4)
+                spi.xfer2(row4)
                 sleep(0.001)
                 
                 row5 = [0x48, location[0], location[1]-2, location[2], data[4], data[12], 0x43]
-                spi.writebytes(row5)
+                spi.xfer2(row5)
                 sleep(0.001)
                 
                 row6 = [0x48, location[0], location[1]-2, location[2]-8, data[5], data[13], 0x43]
-                spi.writebytes(row6)
+                spi.xfer2(row6)
                 sleep(0.001)
 
                 row7 = [0x48, location[0], location[1]-3, location[2], data[6], data[14], 0x43]
-                spi.writebytes(row7)
+                spi.xfer2(row7)
                 sleep(0.001)
                 
                 row8 = [0x48, location[0], location[1]-3, location[2]-8, data[7], data[15], 0x43]
-                spi.writebytes(row8)
+                spi.xfer2(row8)
                 sleep(0.001)
 
             elif inverse == True:
                 row1 = [0x48, location[0], location[1], location[2], 0x0f-data[0], 0x0f-data[8], 0x43]
-                spi.writebytes(row1)
+                spi.xfer2(row1)
                 sleep(0.001)
                 
                 row2 = [0x48, location[0], location[1], location[2]-8, 0x0f-data[1], 0x0f-data[9], 0x43]
-                spi.writebytes(row2)
+                spi.xfer2(row2)
                 sleep(0.001)
                 
                 row3 = [0x48, location[0], location[1]-1, location[2], 0x0f-data[2], 0x0f-data[10], 0x43]
-                spi.writebytes(row3)
+                spi.xfer2(row3)
                 sleep(0.001)
                 
                 row4 = [0x48, location[0], location[1]-1, location[2]-8, 0x0f-data[3], 0x0f-data[11], 0x43]
-                spi.writebytes(row4)
+                spi.xfer2(row4)
                 sleep(0.001)
                 
                 row5 = [0x48, location[0], location[1]-2, location[2], 0x0f-data[4], 0x0f-data[12], 0x43]
-                spi.writebytes(row5)
+                spi.xfer2(row5)
                 sleep(0.001)
                 
                 row6 = [0x48, location[0], location[1]-2, location[2]-8, 0x0f-data[5], 0x0f-data[13], 0x43]
-                spi.writebytes(row6)
+                spi.xfer2(row6)
                 sleep(0.001)
                 
                 row7 = [0x48, location[0], location[1]-3, location[2], 0x0f-data[6], 0x0f-data[14], 0x43]
-                spi.writebytes(row7)
+                spi.xfer2(row7)
                 sleep(0.001)
                 
                 row8 = [0x48, location[0], location[1]-3, location[2]-8, 0x0f-data[7], 0x0f-data[15], 0x43]
-                spi.writebytes(row8)
+                spi.xfer2(row8)
                 sleep(0.001)
                 
         return
@@ -291,9 +292,8 @@ class Q5LCDController(object):
         """
         just making it easier to do clear the screen
         """
-        self.initiateQ5()
+        #self.initiateQ5()
         self.write_0x49_BMP(self.BMP_COMMANDS['CLEARSCREEN'])
-        sleep(0.5)
         return
 
     def writeAString(self, string, inverse=False, font=Q5Font):
@@ -318,9 +318,12 @@ class Q5LCDController(object):
                 position = 1
             else:
                 position = 9
+                cursorMove = 8 - totalChars
+                position += (cursorMove/2)
             for char in wordsToWrite[0]:
                 curs = 'Curs'+str(position)
                 self.write_char_to_display('Char_'+char, curs, inverse=inverse, font=font)
+                
                 position += 1
         else:
             position = 1
@@ -335,6 +338,7 @@ class Q5LCDController(object):
                 for char in word:
                     curs = 'Curs'+str(position)
                     self.write_char_to_display('Char_'+char, curs, inverse=inverse, font=font)
+                    
                     position += 1
     
     def testStringWriting(self):
