@@ -320,7 +320,7 @@ class Q5LCDController(object):
                 position = 9
             for char in wordsToWrite[0]:
                 curs = 'Curs'+str(position)
-                self.write_char_to_display('Char_'+char, curs, inverse=inverse, font=Q5BoldFont)
+                self.write_char_to_display('Char_'+char, curs, inverse=inverse, font=font)
                 position += 1
         else:
             position = 1
@@ -334,7 +334,7 @@ class Q5LCDController(object):
                     position = 25
                 for char in word:
                     curs = 'Curs'+str(position)
-                    self.write_char_to_display('Char_'+char, curs, inverse=inverse)
+                    self.write_char_to_display('Char_'+char, curs, inverse=inverse, font=font)
                     position += 1
     
     def testStringWriting(self):
