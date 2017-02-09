@@ -26,7 +26,7 @@ def setupSPI(device,address):
     spi.mode = 2
     spi.cshigh = False
     spi.no_cs = True
-    spi.max_speed_hz = 30500
+    spi.max_speed_hz = 500000
     return spi
 
 

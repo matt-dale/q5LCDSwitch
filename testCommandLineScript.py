@@ -18,9 +18,9 @@ if aColor:
 	Q5.changeColor(aColor)
 
 if aString:
-	Q5.writeAString(aString)
-	Q5.writeAString(aString)
-	Q5.writeAString(aString)
+	Q5.writeAString(aString, font=Q5BoldFont)
+	#Q5.writeAString(aString, font=Q5BoldFont)
+	#Q5.writeAString(aString, font=Q5BoldFont)
 
 sleep(1)
 	
