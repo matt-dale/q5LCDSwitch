@@ -302,6 +302,8 @@ class Q5LCDController(object):
         various niceties include centering the words on the screen 
         and splitting words over lines if there are more than one 
         """
+        self.clearScreen()
+        sleep(0.1)
         string = string[:32] # can't write more than 32 chars...
         totalWords = 1
         totalChars = len(string)
